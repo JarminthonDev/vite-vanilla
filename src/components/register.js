@@ -50,7 +50,7 @@ export function renderRegister(container) {
     const nombre = document.getElementById('registerName').value;
     const correo = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
-    const roleId = 1
+    const roleId = 2
 
     try {
       const response = await fetch('https://api-skolmi.onrender.com/v1/register', {

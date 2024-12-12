@@ -28,6 +28,8 @@ export function getUserInfo() {
   const token = getToken();
   if (token) {
     const decodedToken = decodeToken(token);
+    //console.log(decodedToken);
+    
     return decodedToken ? {
       name: decodedToken.nombre || 'Usuario',
       rol: decodedToken.rol,
@@ -69,14 +71,22 @@ function navigate(view) {
     }
   } else if (view === 'matricula') {
     if (isAuthenticated()) {
-      renderStudentEnrollment(appContainer);
+      if(validate(userInfo.userId)){
+        renderStudentEnrollment(appContainer);
+      }else{
+        navigate('matricula')
+      }
     } else {
       alert('No estás autenticado. Redirigiendo al login...');
       navigate('login');
     }
   } else if (view === 'academicPlatform') {
     if (isAuthenticated()) {
-        renderAcademicPlatform(appContainer);
+      if(validate(userInfo.userId)){
+        renderAcademicPlatform(appContainer);        
+      }else{
+        navigate('matricula')
+      }
     } else {
       alert('No estás autenticado. Redirigiendo al login...');
       navigate('login');
@@ -156,6 +166,34 @@ function setupNavigationEvents() {
   });
 }
 
+export const validate = async (userId)=>{
+  try { 
+    console.log(userId + ' desde funcion validate');
+    const token = localStorage.getItem('token');
+    // Realiza la solicitud GET para obtener los detalles del usuario
+    const url = new URL(`https://api-skolmi.onrender.com/v1/user/users/${userId}`);
+    
+    const responseUser = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`  // Asegúrate de enviar el token si es necesario
+      },
+      credentials: 'include'
+    });
+    const userData = await responseUser.json(); 
+    
+    console.log(userData[0].codigo);
+                                              
+    if (userData[0].codigo === null) {      
+      return false
+    } else {
+      return true
+    }
+  } catch (error) {
+    console.log('Error al obtener el usuario:', error);
+  }
+}
 // Inicialización
 function initApp() {
   const userInfo = getUserInfo();
@@ -181,6 +219,9 @@ function initApp() {
   setupNavigationEvents();
   updateNavbar();
 }
+
+
+
 
 // Exportar funciones necesarias
 export { navigate, updateNavbar, initApp };

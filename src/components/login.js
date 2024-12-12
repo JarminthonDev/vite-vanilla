@@ -1,4 +1,4 @@
-import { getUserInfo, navigate } from "../navegacion";
+import { getUserInfo, navigate, validate } from "../navegacion";
 
 export function renderLogin(container) {
   container.innerHTML = `
@@ -44,42 +44,48 @@ export function renderLogin(container) {
     const password = document.getElementById('loginPassword').value;
 
     try {
+      // Realiza la solicitud de login
       const response = await fetch('https://api-skolmi.onrender.com/v1/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo, password }),
         credentials: 'include'
       });
+    
       if (response.ok) {
         const data = await response.json();        
-        // Guardar el token en localStorage
-        localStorage.setItem('token', data.token);                
-        const userInfo = getUserInfo()
-
+        // Guarda el token en localStorage
+        localStorage.setItem('token', data.token);  
+    
+        // Asegúrate de que getUserInfo() esté implementada correctamente
+        const userInfo = getUserInfo();  // Deberías asegurarte que esta función decodifique el token correctamente
+    
+        console.log(userInfo);
+    
         if (data.token) {
           // Redirigir según el rol
           if (userInfo.rol === 0) {
-            navigate('dashboard'); // Admin Dashboard
+            navigate('dashboard');  // Admin Dashboard
+          } else if (userInfo.rol === 1) {            
+            if(validate(userInfo.userId)){
+              console.log(userInfo.userId);
+              navigate('academicPlataform')
+            }else{
+              navigate('matricula')
+            }            
           } else {
-            if (userInfo.rol == 1) {
-              // Si el usuario está matriculado, carga la academicPlatform
-              navigate('academicPlatform');
-            } else {
-              // Carga el dashboard o el formulario de matrícula
-              navigate('matricula');
-            }
+            // Si el rol no es 0 ni 1, redirige a la página de matrícula
+            navigate('educacionVirtual');
           }
         } else {
           throw new Error('Error al decodificar el token.');
         }
-        
       } else {
         const error = await response.json();
-        alert(`Error: ${error.message}`);
+        alert(`Error en el login: ${error.message}`);
       }
     } catch (error) {
       console.log(error);
-      
       alert('Hubo un problema con el servidor. Intenta más tarde.');
     }
   });
