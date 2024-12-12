@@ -1,4 +1,5 @@
 import '../styles/register.css';
+import { navigate } from '../navegacion';
 
 export function renderRegister(container) {
   container.innerHTML = `
@@ -35,7 +36,7 @@ export function renderRegister(container) {
 
           <!-- Enlace para Iniciar sesión -->
           <p class="mt-3 text-center">
-            <a href="#" id="showLogin" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
+            <a href="#" id="navbarLogin" class="text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
           </p>
         </form>
       </div>
@@ -49,19 +50,18 @@ export function renderRegister(container) {
     const nombre = document.getElementById('registerName').value;
     const correo = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
+    const roleId = 1
 
     try {
       const response = await fetch('https://api-skolmi.onrender.com/v1/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, correo, password }),
+        body: JSON.stringify({ nombre, correo, password,roleId }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        alert('Registro exitoso. Ahora puedes iniciar sesión.');
-        // Opcional: redirigir al login
-        window.location.href = '/login.html'; // O la URL de inicio de sesión correspondiente
+        navigate('login')// O la URL de inicio de sesión correspondiente
       } else {
         const error = await response.json();
         alert(`Error: ${error.message}`);

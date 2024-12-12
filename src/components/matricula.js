@@ -1,11 +1,7 @@
-export function renderStudentEnrollment(container) {
-  const token = localStorage.getItem('token');
 
-  // Verificar si el token está presente
-  if (!token) {
-    window.location.href = "/login.html";  // Redirigir al login si no hay token
-    return;
-  }
+import { navigate } from "../navegacion";
+
+export function renderStudentEnrollment(container) {
 
   container.innerHTML = `
 
@@ -29,7 +25,7 @@ export function renderStudentEnrollment(container) {
             <p class="text-gray-600 mt-2">Matrícula confirmada para el ciclo escolar 2024.</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-gray-500 text-xs">12 Diciembre, 2024</span>
-              <button class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
+              <button id="showMatricula" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
             </div>
           </div>
         </div>
@@ -44,7 +40,7 @@ export function renderStudentEnrollment(container) {
             <p class="text-gray-600 mt-2">Matrícula confirmada para el ciclo escolar 2024.</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-gray-500 text-xs">10 Diciembre, 2024</span>
-              <button class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
+              <button id="showMatricula" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
             </div>
           </div>
         </div>
@@ -59,7 +55,7 @@ export function renderStudentEnrollment(container) {
             <p class="text-gray-600 mt-2">Matrícula confirmada para el ciclo escolar 2024.</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-gray-500 text-xs">09 Diciembre, 2024</span>
-              <button class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
+              <button id="showMatricula" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600">Ver Matricula</button>
             </div>
           </div>
         </div>
@@ -70,10 +66,10 @@ export function renderStudentEnrollment(container) {
   `;
 
   // Event listener para cerrar sesión desde el navbar
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    window.location.href = "/login.html";  // Redirigir a la página de login
-  });
+  // document.getElementById('logoutBtn').addEventListener('click', () => {
+  //   localStorage.removeItem('token');
+  //   window.location.href = "/login.html";  // Redirigir a la página de login
+  // });
 
   // Aquí puedes agregar la lógica para traer los datos de la matrícula desde la API
   // Si tienes una API que proporciona la información de la matrícula, realiza la llamada aquí y llena las tarjetas con los datos reales

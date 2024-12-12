@@ -1,4 +1,4 @@
-import '../styles/login.css';
+import { getUserInfo, navigate } from "../navegacion";
 
 export function renderLogin(container) {
   container.innerHTML = `
@@ -40,30 +40,46 @@ export function renderLogin(container) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const email = document.getElementById('loginEmail').value;
+    const correo = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
     try {
       const response = await fetch('https://api-skolmi.onrender.com/v1/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ correo, password }),
+        credentials: 'include'
       });
-
       if (response.ok) {
-        const data = await response.json();
-        alert(`Bienvenido ${data.user.name}!`);
-        
-        // Guardamos el token en localStorage
-        localStorage.setItem('token', data.token);
+        const data = await response.json();        
+        // Guardar el token en localStorage
+        localStorage.setItem('token', data.token);                
+        const userInfo = getUserInfo()
 
-        // Redirigir al dashboard
-        window.location.href = '/dashboard.html'; // O la URL que corresponda
+        if (data.token) {
+          // Redirigir según el rol
+          if (userInfo.rol === 0) {
+            navigate('dashboard'); // Admin Dashboard
+          } else {
+            if (userInfo.rol == 1) {
+              // Si el usuario está matriculado, carga la academicPlatform
+              navigate('academicPlatform');
+            } else {
+              // Carga el dashboard o el formulario de matrícula
+              navigate('matricula');
+            }
+          }
+        } else {
+          throw new Error('Error al decodificar el token.');
+        }
+        
       } else {
         const error = await response.json();
         alert(`Error: ${error.message}`);
       }
     } catch (error) {
+      console.log(error);
+      
       alert('Hubo un problema con el servidor. Intenta más tarde.');
     }
   });
